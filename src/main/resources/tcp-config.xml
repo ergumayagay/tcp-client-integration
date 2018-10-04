@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-ip="http://www.springframework.org/schema/integration/ip"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration-5.0.xsd
+		http://www.springframework.org/schema/integration/ip http://www.springframework.org/schema/integration/ip/spring-integration-ip.xsd">
+
+
+	<int:gateway id="gateway"
+		service-interface="org.emil.integration.Gateway"
+		default-request-channel="input">
+		
+	</int:gateway>
+
+	<int-ip:tcp-connection-factory id="client"
+		type="client" host="localhost" port="6969" 
+		single-use="true" so-timeout="10000" />
+	
+	<int:channel id="input"></int:channel>
+	
+	<int-ip:tcp-outbound-gateway id="outGateway" 
+	request-channel="input"
+	reply-channel="clientByte2StringChannel"
+	connection-factory="client" 
+	request-timeout="10000"
+	reply-timeout="10000"/>
+	
+	<int:object-to-string-transformer id="clientByte2String" 
+	input-channel="clientByte2StringChannel"></int:object-to-string-transformer>
+	
+
+	
+	<int:channel id="clientByte2StringChannel"></int:channel>
+</beans>
